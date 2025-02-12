@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Compras</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Alkatra:wght@400;600;700&family=IBM+Plex+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700&family=Indie+Flower&family=Kaushan+Script&family=Lobster&family=Poppins:wght@300;400;600;700&family=Roboto+Condensed:ital,wght@0,100..900;1,100..900&family=Roboto:ital,wght@1,100&family=Rubik+Bubbles&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background-color: #343a40;
+            color: #fff;
+            display: flex;
+            height: 100vh;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column; /* Asegura que los elementos principales estén apilados */
+            padding-top: 80px; /* Espacio para el encabezado fijo */
+        }
+        .container {
+            display: flex;
+            position: fixed;
+            top: 20%;
+            gap: 20px;
+            width: 100%;
+            margin-left: 10px;
+            margin-right: 10px;
+            min-width: 95%;
+        }
+        .search-box {
+            flex: 1;
+        }
+        .shopping-list {
+            flex-grow: 0.1;
+            width: 40%;
+            background: #495057;
+            border-radius: 10px;
+            padding: 20px;  
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        header h1 {
+            font-family: 'IBM Plex Mono', sans-serif; /* Cambia a la fuente que desees */
+            font-style: Italic; /* Ajusta el grosor de la letra */
+            font-weight: 500;
+        }
+
+        #search::placeholder {
+            color: rgba(117, 117, 117, 0.5); /* Cambia la opacidad del placeholder */
+            font-weight: 500;
+        }
+
+        #suggestions {
+            max-height: 300px; /* Altura máxima del contenedor de sugerencias */
+            overflow-y: auto; /* Habilita el scroll vertical */
+            background-color: #495057; /* Fondo del contenedor */
+            border: 1px solid #6c757d; /* Borde para destacar */
+            border-radius: 5px; /* Bordes redondeados */
+            padding: 5px; /* Espaciado interno */
+            list-style: none; /* Elimina el estilo de lista por defecto */
+        }
+
+        #suggestions::-webkit-scrollbar {
+            width: 8px; /* Ancho del scroll */
+        }
+        
+        #suggestions::-webkit-scrollbar-thumb {
+            background-color: #6c757d; /* Color del scroll */
+            border-radius: 5px; /* Bordes redondeados */
+        }
+        
+        #suggestions::-webkit-scrollbar-thumb:hover {
+            background-color: #adb5bd; /* Color al pasar el cursor */
+        }
+
+        .confirm-button {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        
+        .confirm-button button {
+            width: 80%;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            padding: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        
+        .confirm-button button:hover {
+            background-color: #218838;
+        }
+
+        .list-group-item img {
+            width: 50px;
+            height: 50px;
+            margin-right: 10px;
+            object-fit: contain;
+        }
+    </style>
+</head>
+<body>
+    <header class="text-center bg-dark text-white py-3 w-100">
+        <h1 class="display-4 fw-bold">UltraMercado</h1>
+    </header>
+    
+    <div class="container">
+        <div class="search-box">
+            <h1 class="text-center">Busca tus productos</h1>
+            <input id="search" type="text" class="form-control mt-3" placeholder="Que necesitas?...">
+            <ul id="suggestions" class="list-group mt-2"></ul>
+        </div>
+        <div class="shopping-list">
+            <h4 class="text-center">Tu lista de compras</h4>
+            <ul id="shopping-list" class="list-group mt-3"></ul>
+            <div class="confirm-button">
+                <button id="confirm-button">CONFIRMAR</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/static/script.js"></script>
+</body>
+</html>
+
