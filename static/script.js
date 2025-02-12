@@ -24,7 +24,7 @@ function preloadImages() {
 // Ejecutar la pre-carga cuando los datos estén listos y llenar el mapa
 let productNames = []; // Guardará los nombres normalizados para búsqueda rápida
 
-fetch('https://tu-api.onrender.com/productos')
+fetch('https://ultra-mercado.onrender.com/productos')
     .then(response => response.json())
     .then(data => {
         products = data;
