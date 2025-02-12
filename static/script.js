@@ -24,7 +24,7 @@ function preloadImages() {
 // Ejecutar la pre-carga cuando los datos estén listos y llenar el mapa
 let productNames = []; // Guardará los nombres normalizados para búsqueda rápida
 
-fetch('http://127.0.0.1:5000/productos')
+fetch('https://tu-api.onrender.com/productos')
     .then(response => response.json())
     .then(data => {
         products = data;
