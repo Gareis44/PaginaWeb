@@ -2,6 +2,8 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS
 import sqlite3
 import os
+from flask import Flask, send_from_directory
+
 
 app = Flask(__name__)
 CORS(app)
@@ -14,6 +16,16 @@ BASES_DIR = 'Bases_de_datos'
 def columna_existe(cursor, tabla, columna):
     cursor.execute(f"PRAGMA table_info({tabla})")
     return columna in [info[1] for info in cursor.fetchall()]
+
+
+
+@app.route('/')
+def servir_pagina():
+    return send_from_directory('static', 'index.html')
+
+@app.route('/static/<path:filename>')
+def servir_static(filename):
+    return send_from_directory('static', filename)
 
 @app.route('/productos', methods=['GET'])
 def obtener_productos():
@@ -57,6 +69,3 @@ def obtener_productos():
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))  # Render asigna el puerto automáticamente
     app.run(host='0.0.0.0', port=port)
-
-
-
