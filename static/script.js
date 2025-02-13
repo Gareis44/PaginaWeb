@@ -11,6 +11,11 @@ function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
+// Función para convertir el precio del formato "1.000,00" a un número (1000)
+function parsePrice(price) {
+    return parseFloat(price.replace(/\./g, '').replace(',', '.'));
+}
+
 // Cargar imágenes en segundo plano para acelerar la visualización
 function preloadImages() {
     products.forEach(product => {
@@ -62,11 +67,8 @@ function mostrarSugerencias() {
             .filter(name => queryWords.every(word => name.includes(word)))
             .map(name => productMap.get(name));
 
-        // Ordenar por precio
-        filtered.sort((a, b) => 
-            parseFloat(a.precio.replace(/[^0-9.-]+/g, "")) - 
-            parseFloat(b.precio.replace(/[^0-9.-]+/g, ""))
-        );
+        // Ordenar por precio usando la función parsePrice
+        filtered.sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 
         // Renderizar sugerencias
         filtered.forEach(product => {
@@ -91,7 +93,6 @@ function mostrarSugerencias() {
         });
     }
 }
-
 
 // Añadir productos a la lista de compras
 function addToShoppingList(product) {
@@ -143,4 +144,3 @@ confirmButton.addEventListener("click", () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 });
-
