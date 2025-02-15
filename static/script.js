@@ -11,9 +11,11 @@ function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-// Función para convertir el precio del formato "1.000,00" a un número (1000)
-function parsePrice(price) {
-    return parseFloat(price.replace(/\./g, '').replace(',', '.'));
+// Función para convertir el string de precio a número, eliminando el separador de miles y convirtiendo la coma a punto
+function parsePrice(priceStr) {
+    // Elimina los puntos (separador de miles) y reemplaza la coma (separador decimal) por un punto.
+    const normalized = priceStr.replace(/\./g, "").replace(",", ".");
+    return parseFloat(normalized);
 }
 
 // Cargar imágenes en segundo plano para acelerar la visualización
@@ -67,7 +69,7 @@ function mostrarSugerencias() {
             .filter(name => queryWords.every(word => name.includes(word)))
             .map(name => productMap.get(name));
 
-        // Ordenar por precio usando la función parsePrice
+        // Ordenar por precio utilizando la función parsePrice
         filtered.sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 
         // Renderizar sugerencias
@@ -144,3 +146,4 @@ confirmButton.addEventListener("click", () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 });
+
