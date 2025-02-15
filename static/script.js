@@ -36,11 +36,39 @@ function createImageElement(src, alt, maxRetries = 3) {
                 img.src = src + "?retry=" + retries;
             }, 1000 * retries);
         } else {
-            img.src = "fallback.jpg"; // Imagen de respaldo
+            img.src = "fallback.jpg";
         }
     };
 
     return img;
+}
+
+// Precarga de imágenes con múltiples intentos
+function preloadImages(maxRetries = 3) {
+    products.forEach(product => {
+        if (product.imagen) {
+            let retries = 0;
+            function loadImage() {
+                const img = new Image();
+                img.src = product.imagen;
+
+                img.onload = function () {
+                    console.log(`Imagen cargada: ${product.imagen}`);
+                };
+
+                img.onerror = function () {
+                    if (retries < maxRetries) {
+                        console.warn(`Fallo en ${product.imagen}, reintentando (${retries + 1}/${maxRetries})`);
+                        retries++;
+                        setTimeout(loadImage, 1000 * retries);
+                    } else {
+                        console.error(`No se pudo cargar ${product.imagen} después de ${maxRetries} intentos`);
+                    }
+                };
+            }
+            loadImage();
+        }
+    });
 }
 
 // Cargar productos y llenar el mapa
@@ -54,6 +82,8 @@ fetch('https://ultra-mercado.onrender.com/productos')
             productMap.set(normalized, product);
             productNames.push(normalized);
         });
+
+        preloadImages();
     })
     .catch(error => console.error("Error al cargar productos:", error));
 
@@ -102,7 +132,7 @@ function addToShoppingList(product) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
 
-    const img = createImageElement(product.imagen, product.nombre);
+    const img = createImageElement(product.imagen, product.nombre, 3);
     img.style.width = "50px";
     img.style.height = "50px";
 
