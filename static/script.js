@@ -11,10 +11,21 @@ function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-// Función para convertir el string de precio a número, eliminando el separador de miles y convirtiendo la coma a punto
+// Función para convertir el string de precio a número, eliminando el separador de miles,
+// el símbolo de moneda y convirtiendo la coma a punto
 function parsePrice(priceStr) {
-    // Elimina los puntos (separador de miles) y reemplaza la coma (separador decimal) por un punto.
-    const normalized = priceStr.replace(/\./g, "").replace(",", ".");
+    // 1) Quitar todo lo que NO sea dígito, punto o coma (ej. $, espacios, etc.)
+    let normalized = priceStr.replace(/[^\d.,]/g, "");
+
+    // 2) Eliminar los puntos (asumiendo que son separadores de miles)
+    //    Nota: si tienes un caso raro donde el punto es separador decimal
+    //    y no usas coma, deberías ajustarlo. Aquí asumimos que la coma es el decimal.
+    normalized = normalized.replace(/\./g, "");
+
+    // 3) Reemplazar la coma (decimal) por punto
+    normalized = normalized.replace(",", ".");
+
+    // 4) Convertir a número
     return parseFloat(normalized);
 }
 
@@ -69,7 +80,7 @@ function mostrarSugerencias() {
             .filter(name => queryWords.every(word => name.includes(word)))
             .map(name => productMap.get(name));
 
-        // Ordenar por precio utilizando la función parsePrice
+        // Ordenar por precio usando parsePrice
         filtered.sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 
         // Renderizar sugerencias
@@ -146,4 +157,3 @@ confirmButton.addEventListener("click", () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
 });
-
