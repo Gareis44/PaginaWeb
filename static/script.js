@@ -4,74 +4,44 @@ const shoppingList = document.getElementById("shopping-list");
 const confirmButton = document.getElementById("confirm-button");
 
 let products = [];
-let productMap = new Map();
-let productNames = [];
+let productMap = new Map(); // Estructura optimizada para búsqueda rápida
 
 // Función para normalizar cadenas de texto eliminando acentos
 function normalizeString(str) {
     return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
 }
 
-// Función para convertir el string de precio a número
+// Función para convertir el string de precio a número, eliminando el separador de miles,
+// el símbolo de moneda y convirtiendo la coma a punto
 function parsePrice(priceStr) {
-    let normalized = priceStr.replace(/[^\d.,]/g, "").replace(/\./g, "").replace(",", ".");
+    // 1) Quitar todo lo que NO sea dígito, punto o coma (ej. $, espacios, etc.)
+    let normalized = priceStr.replace(/[^\d.,]/g, "");
+
+    // 2) Eliminar los puntos (asumiendo que son separadores de miles)
+    //    Nota: si tienes un caso raro donde el punto es separador decimal
+    //    y no usas coma, deberías ajustarlo. Aquí asumimos que la coma es el decimal.
+    normalized = normalized.replace(/\./g, "");
+
+    // 3) Reemplazar la coma (decimal) por punto
+    normalized = normalized.replace(",", ".");
+
+    // 4) Convertir a número
     return parseFloat(normalized);
 }
 
-// Función para crear una imagen con reintentos de carga
-function createImageElement(src, alt, maxRetries = 3) {
-    const img = document.createElement("img");
-    img.src = src;
-    img.alt = alt;
-    img.style.width = "100px";
-    img.style.height = "100px";
-    img.style.marginRight = "10px";
-
-    let retries = 0;
-    img.onerror = function () {
-        if (retries < maxRetries) {
-            console.warn(`Error cargando ${src}, reintentando (${retries + 1}/${maxRetries})`);
-            retries++;
-            setTimeout(() => {
-                img.src = src + "?retry=" + retries;
-            }, 1000 * retries);
-        } else {
-            img.src = "fallback.jpg";
-        }
-    };
-
-    return img;
-}
-
-// Precarga de imágenes con múltiples intentos
-function preloadImages(maxRetries = 3) {
+// Cargar imágenes en segundo plano para acelerar la visualización
+function preloadImages() {
     products.forEach(product => {
         if (product.imagen) {
-            let retries = 0;
-            function loadImage() {
-                const img = new Image();
-                img.src = product.imagen;
-
-                img.onload = function () {
-                    console.log(`Imagen cargada: ${product.imagen}`);
-                };
-
-                img.onerror = function () {
-                    if (retries < maxRetries) {
-                        console.warn(`Fallo en ${product.imagen}, reintentando (${retries + 1}/${maxRetries})`);
-                        retries++;
-                        setTimeout(loadImage, 1000 * retries);
-                    } else {
-                        console.error(`No se pudo cargar ${product.imagen} después de ${maxRetries} intentos`);
-                    }
-                };
-            }
-            loadImage();
+            const img = new Image();
+            img.src = product.imagen;
         }
     });
 }
 
-// Cargar productos y llenar el mapa
+// Ejecutar la pre-carga cuando los datos estén listos y llenar el mapa
+let productNames = []; // Guardará los nombres normalizados para búsqueda rápida
+
 fetch('https://ultra-mercado.onrender.com/productos')
     .then(response => response.json())
     .then(data => {
@@ -80,7 +50,7 @@ fetch('https://ultra-mercado.onrender.com/productos')
         products.forEach(product => {
             const normalized = normalizeString(product.nombre);
             productMap.set(normalized, product);
-            productNames.push(normalized);
+            productNames.push(normalized); // Guardar nombres normalizados en un array
         });
 
         preloadImages();
@@ -89,6 +59,7 @@ fetch('https://ultra-mercado.onrender.com/productos')
 
 // Manejar entrada del usuario con debounce
 let searchTimeout;
+
 search.addEventListener("input", () => {
     clearTimeout(searchTimeout);
     searchTimeout = setTimeout(() => {
@@ -101,20 +72,29 @@ function mostrarSugerencias() {
     suggestions.innerHTML = "";
 
     if (query) {
+        // Se separa la consulta en palabras, eliminando posibles entradas vacías
         const queryWords = query.split(" ").filter(Boolean);
 
+        // Se filtran los nombres de productos normalizados comprobando que cada palabra esté contenida en el nombre
         const filtered = productNames
             .filter(name => queryWords.every(word => name.includes(word)))
             .map(name => productMap.get(name));
 
+        // Ordenar por precio usando parsePrice
         filtered.sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 
+        // Renderizar sugerencias
         filtered.forEach(product => {
             const li = document.createElement("li");
             li.classList.add("list-group-item", "list-group-item-action", "d-flex", "align-items-center");
             li.style.cursor = "pointer";
 
-            const img = createImageElement(product.imagen, product.nombre);
+            const img = document.createElement("img");
+            img.src = product.imagen;
+            img.alt = product.nombre;
+            img.style.width = "100px";
+            img.style.height = "100px";
+            img.style.marginRight = "10px";
 
             const text = document.createElement("span");
             text.textContent = `${product.nombre} - ${product.precio} (${product.db})`;
@@ -132,11 +112,13 @@ function addToShoppingList(product) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
 
-    const img = createImageElement(product.imagen, product.nombre, 3);
-    img.style.width = "50px";
+    const img = document.createElement("img"); // Crear elemento imagen
+    img.src = product.imagen; // Asignar la url de la imagen
+    img.alt = product.nombre;
+    img.style.width = "50px"; // Ajustar el tamaño de la imagen
     img.style.height = "50px";
-
-    li.appendChild(img);
+    img.style.marginRight = "10px";
+    li.appendChild(img); // Agregar la imagen al elemento li
 
     const text = document.createElement("span");
     text.textContent = `${product.nombre} - ${product.precio} (${product.db})`;
@@ -157,7 +139,7 @@ function addToShoppingList(product) {
     search.value = "";
 }
 
-// Confirmar la lista de compras y descargarla
+// Manejar el evento de clic en el botón "CONFIRMAR"
 confirmButton.addEventListener("click", () => {
     const items = shoppingList.querySelectorAll("li");
     const productList = [];
