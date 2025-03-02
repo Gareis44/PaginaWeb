@@ -10,7 +10,7 @@ let searchTimeout;
 
 // Función para normalizar cadenas
 function normalizeString(str) {
-    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase();
+    return str.normalize("NFD").replace(/[̀-\u036f]/g, "").toLowerCase();
 }
 
 // Función para extraer palabras clave correctamente
@@ -40,25 +40,28 @@ fetch('https://ultra-mercado.onrender.com/productos')
             // Construcción del índice de búsqueda
             keywords.forEach(word => {
                 if (!keywordIndex.has(word)) {
-                    keywordIndex.set(word, []);
+                    keywordIndex.set(word, new Set());
                 }
-                keywordIndex.get(word).push(product);
+                keywordIndex.get(word).add(product);
             });
         });
     })
     .catch(error => console.error("Error al cargar productos:", error));
 
-// Función mejorada de búsqueda con índice de palabras clave
+// Función mejorada de búsqueda con coincidencia exacta de todas las palabras clave
 function searchProducts(query) {
     const queryWords = extractKeywords(query);
-    let matchedProducts = new Set();
-
-    queryWords.forEach(word => {
-        if (keywordIndex.has(word)) {
-            keywordIndex.get(word).forEach(product => matchedProducts.add(product));
+    if (queryWords.length === 0) return [];
+    
+    let matchedProducts = new Set(keywordIndex.get(queryWords[0]) || []);
+    
+    for (let i = 1; i < queryWords.length; i++) {
+        if (!keywordIndex.has(queryWords[i])) {
+            return []; // Si alguna palabra no tiene coincidencias, no hay resultados
         }
-    });
-
+        matchedProducts = new Set([...matchedProducts].filter(product => keywordIndex.get(queryWords[i]).has(product)));
+    }
+    
     return Array.from(matchedProducts).sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 }
 
@@ -101,4 +104,3 @@ function mostrarSugerencias() {
         });
     }
 }
-
