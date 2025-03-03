@@ -104,3 +104,54 @@ function mostrarSugerencias() {
         });
     }
 }
+
+// Añadir productos a la lista de compras
+function addToShoppingList(product) {
+    const li = document.createElement("li");
+    li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+
+    const img = document.createElement("img"); // Crear elemento imagen
+    img.src = product.imagen; // Asignar la url de la imagen
+    img.alt = product.nombre;
+    img.style.width = "50px"; // Ajustar el tamaño de la imagen
+    img.style.height = "50px";
+    img.style.marginRight = "10px";
+    li.appendChild(img); // Agregar la imagen al elemento li
+
+    const text = document.createElement("span");
+    text.textContent = `${product.nombre} - ${product.precio} (${product.db})`;
+    li.appendChild(text);
+
+    const removeButton = document.createElement("button");
+    removeButton.classList.add("btn", "btn-danger", "btn-sm");
+    removeButton.textContent = "X";
+    removeButton.style.marginLeft = "10px";
+    removeButton.addEventListener("click", () => {
+        shoppingList.removeChild(li);
+    });
+
+    li.appendChild(removeButton);
+    shoppingList.appendChild(li);
+
+    suggestions.innerHTML = "";
+    search.value = "";
+}
+
+// Manejar el evento de clic en el botón "CONFIRMAR"
+confirmButton.addEventListener("click", () => {
+    const items = shoppingList.querySelectorAll("li");
+    const productList = [];
+    items.forEach(item => {
+        productList.push(item.textContent.replace(" X", ""));
+    });
+
+    const blob = new Blob([productList.join("\n")], { type: "text/plain" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "Lista compras.txt";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+});
