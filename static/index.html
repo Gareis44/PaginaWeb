@@ -137,6 +137,21 @@
       margin-right: 10px;
       object-fit: contain;
     }
+
+    #suggestions li {
+      background-color: #3c4147;        /* Fondo oscuro para resaltar */
+      border: 2px solid #6c757d;       /* Borde más grueso */
+      border-radius: 8px;              /* Bordes redondeados */
+      margin-bottom: 10px;             /* Separación vertical entre productos */
+      padding: 10px;                   /* Espacio interno para el contenido */
+    }
+    
+    /* Efecto hover (opcional) */
+    #suggestions li:hover {
+      background-color: #4a4f56;       /* Un tono más claro u oscuro */
+      border-color: #adb5bd;          /* Cambia el color del borde en hover */
+      transition: 0.2s ease;          /* Transición suave */
+    }
     
     /* Media Query para dispositivos móviles */
     @media (max-width: 768px) {
@@ -145,6 +160,14 @@
       }
       .shopping-list {
         width: 100%;
+      }
+    }
+
+
+    /* Ajuste para pantallas de escritorio */
+    @media (min-width: 992px) {
+      #suggestions {
+        max-height: calc(100vh - 200px); /* Ajusta 200px según tu encabezado y márgenes */
       }
     }
   </style>
