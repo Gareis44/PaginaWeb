@@ -142,7 +142,10 @@ confirmButton.addEventListener("click", () => {
     const items = shoppingList.querySelectorAll("li");
     const productList = [];
     items.forEach(item => {
-        productList.push(item.textContent.replace(" X", ""));
+        const textSpan = item.querySelector("span"); // Selecciona solo el texto del producto
+        if (textSpan) {
+            productList.push(textSpan.textContent.trim());
+        }
     });
 
     const blob = new Blob([productList.join("\n")], { type: "text/plain" });
