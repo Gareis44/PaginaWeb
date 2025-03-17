@@ -97,9 +97,9 @@ function mostrarSugerencias() {
             const text = document.createElement("span");
             text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
 
-            if (product.condicion_especial) {
+            if (product.condicion) {
                 const condition = document.createElement("small");
-                condition.textContent = `\u2728 ${product.condicion_especial}`; // Icono de estrella para destacar
+                condition.textContent = `\u2728 ${product.condicion}`; // Icono de estrella para destacar
                 condition.style.color = "#ffc107"; // Color dorado
                 condition.style.marginLeft = "10px";
                 text.appendChild(condition);
@@ -129,9 +129,9 @@ function addToShoppingList(product) {
     const text = document.createElement("span");
     text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
 
-    if (product.condicion_especial) {
+    if (product.condicion) {
         const condition = document.createElement("small");
-        condition.textContent = `\u2728 ${product.condicion_especial}`;
+        condition.textContent = `\u2728 ${product.condicion}`;
         condition.style.color = "#ffc107";
         condition.style.marginLeft = "10px";
         text.appendChild(condition);
