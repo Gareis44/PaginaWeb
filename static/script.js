@@ -52,16 +52,16 @@ fetch('https://ultra-mercado.onrender.com/productos')
 function searchProducts(query) {
     const queryWords = extractKeywords(query);
     if (queryWords.length === 0) return [];
-    
+
     let matchedProducts = new Set(keywordIndex.get(queryWords[0]) || []);
-    
+
     for (let i = 1; i < queryWords.length; i++) {
         if (!keywordIndex.has(queryWords[i])) {
             return []; // Si alguna palabra no tiene coincidencias, no hay resultados
         }
         matchedProducts = new Set([...matchedProducts].filter(product => keywordIndex.get(queryWords[i]).has(product)));
     }
-    
+
     return Array.from(matchedProducts).sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
 }
 
@@ -89,13 +89,21 @@ function mostrarSugerencias() {
             const img = document.createElement("img");
             img.src = product.imagen;
             img.alt = product.nombre;
-            img.loading = "lazy"; // Optimización de carga de imágenes
+            img.loading = "lazy";
             img.style.width = "100px";
             img.style.height = "100px";
             img.style.marginRight = "10px";
 
             const text = document.createElement("span");
-            text.textContent = `${product.nombre} - ${product.precio} (${product.db})`;
+            text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
+
+            if (product.condicion) {
+                const condition = document.createElement("small");
+                condition.textContent = `\u2728 ${product.condicion}`; // Icono de estrella para destacar
+                condition.style.color = "#ffc107"; // Color dorado
+                condition.style.marginLeft = "10px";
+                text.appendChild(condition);
+            }
 
             li.appendChild(img);
             li.appendChild(text);
@@ -110,16 +118,25 @@ function addToShoppingList(product) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
 
-    const img = document.createElement("img"); // Crear elemento imagen
-    img.src = product.imagen; // Asignar la url de la imagen
+    const img = document.createElement("img");
+    img.src = product.imagen;
     img.alt = product.nombre;
-    img.style.width = "50px"; // Ajustar el tamaño de la imagen
+    img.style.width = "50px";
     img.style.height = "50px";
     img.style.marginRight = "10px";
-    li.appendChild(img); // Agregar la imagen al elemento li
+    li.appendChild(img);
 
     const text = document.createElement("span");
-    text.textContent = `${product.nombre} - ${product.precio} (${product.db})`;
+    text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
+
+    if (product.condicion) {
+        const condition = document.createElement("small");
+        condition.textContent = `\u2728 ${product.condicion}`;
+        condition.style.color = "#ffc107";
+        condition.style.marginLeft = "10px";
+        text.appendChild(condition);
+    }
+
     li.appendChild(text);
 
     const removeButton = document.createElement("button");
@@ -142,7 +159,7 @@ confirmButton.addEventListener("click", () => {
     const items = shoppingList.querySelectorAll("li");
     const productList = [];
     items.forEach(item => {
-        const textSpan = item.querySelector("span"); // Selecciona solo el texto del producto
+        const textSpan = item.querySelector("span");
         if (textSpan) {
             productList.push(textSpan.textContent.trim());
         }
