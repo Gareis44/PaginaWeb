@@ -36,15 +36,21 @@ def obtener_productos():
         for db_name in BASES_DE_DATOS:
             ruta_db = os.path.join(BASES_DIR, f"{db_name}.db")
 
-            # Usamos `with` para manejar automáticamente la conexión y evitar fugas de memoria
             with sqlite3.connect(ruta_db) as conn:
                 cursor = conn.cursor()
 
-                # Verificar si la columna 'imagen' existe
+                # Verificar si las columnas 'imagen' y 'condicion' existen
                 tiene_imagen = columna_existe(cursor, 'productos', 'imagen')
+                tiene_condicion = columna_existe(cursor, 'productos', 'condicion')
 
-                # Consulta optimizada
-                query = "SELECT nombre, precio, imagen FROM productos" if tiene_imagen else "SELECT nombre, precio FROM productos"
+                # Construir la consulta
+                columnas = ["nombre", "precio"]
+                if tiene_imagen:
+                    columnas.append("imagen")
+                if tiene_condicion:
+                    columnas.append("condicion")
+
+                query = f"SELECT {', '.join(columnas)} FROM productos"
                 params = ()
 
                 if consulta:
@@ -54,10 +60,18 @@ def obtener_productos():
                 cursor.execute(query, params)
                 productos = cursor.fetchall()
 
-                # Agregar los resultados con el nombre de la base de datos
                 for p in productos:
-                    resultado = {"db": db_name, "nombre": p[0], "precio": p[1]}
-                    resultado["imagen"] = p[2] if tiene_imagen else ""
+                    resultado = {
+                        "db": db_name,
+                        "nombre": p[0],
+                        "precio": p[1]
+                    }
+                    idx = 2
+                    if tiene_imagen:
+                        resultado["imagen"] = p[idx]
+                        idx += 1
+                    if tiene_condicion:
+                        resultado["condicion"] = p[idx]
                     resultados.append(resultado)
 
         return jsonify(resultados)
