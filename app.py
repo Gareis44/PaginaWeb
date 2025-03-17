@@ -39,16 +39,16 @@ def obtener_productos():
             with sqlite3.connect(ruta_db) as conn:
                 cursor = conn.cursor()
 
-                # Verificar si las columnas 'imagen' y 'condicion' existen
+                # Verificar si las columnas 'imagen' y 'condicion_especial' existen
                 tiene_imagen = columna_existe(cursor, 'productos', 'imagen')
-                tiene_condicion = columna_existe(cursor, 'productos', 'condicion')
+                tiene_condicion = columna_existe(cursor, 'productos', 'condicion_especial')
 
                 # Construir la consulta
                 columnas = ["nombre", "precio"]
                 if tiene_imagen:
                     columnas.append("imagen")
                 if tiene_condicion:
-                    columnas.append("condicion")
+                    columnas.append("condicion_especial")
 
                 query = f"SELECT {', '.join(columnas)} FROM productos"
                 params = ()
@@ -71,7 +71,7 @@ def obtener_productos():
                         resultado["imagen"] = p[idx]
                         idx += 1
                     if tiene_condicion:
-                        resultado["condicion"] = p[idx]
+                        resultado["condicion"] = p[idx]  # Devuelve con el nombre que espera el frontend
                     resultados.append(resultado)
 
         return jsonify(resultados)
@@ -79,6 +79,7 @@ def obtener_productos():
     except Exception as e:
         app.logger.error(f"Error al obtener productos: {e}")
         return jsonify({"error": str(e)}), 500
+
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 10000))  # Render asigna el puerto automáticamente
