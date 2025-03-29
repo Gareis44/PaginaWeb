@@ -73,7 +73,7 @@ search.addEventListener("input", () => {
     }, 500);
 });
 
-// Mostrar sugerencias optimizadas
+// Mostrar sugerencias
 function mostrarSugerencias() {
     const query = normalizeString(search.value);
     suggestions.innerHTML = "";
@@ -113,7 +113,7 @@ function mostrarSugerencias() {
     }
 }
 
-// Añadir productos a la lista de compras
+// Añadir productos a la lista compras
 function addToShoppingList(product) {
     const li = document.createElement("li");
     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
