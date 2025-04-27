@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Lista de bases de datos disponibles
-BASES_DE_DATOS = ['Hiper','LaAnonima', 'Pinguino', 'Carnave', 'Flaming', 'Frioteka']
+BASES_DE_DATOS = ['Hiper','LaAnonima', 'Carnave', 'Flaming', 'Frioteka']
 BASES_DIR = 'Bases_de_datos'
 
 # Función para verificar si una columna existe en una tabla
@@ -78,6 +78,7 @@ def obtener_productos():
 
     except Exception as e:
         app.logger.error(f"Error al obtener productos: {e}")
+        print(f"Error al obtener productos: {e}")
         return jsonify({"error": str(e)}), 500
 
 
