@@ -9,7 +9,7 @@ app = Flask(__name__)
 CORS(app)
 
 # Lista de bases de datos disponibles
-BASES_DE_DATOS = ['Hiper','LaAnonima', 'Carnave', 'Flaming', 'Frioteka']
+BASES_DE_DATOS = ['Hiper', 'Carnave', 'Flaming', 'Frioteka']
 BASES_DIR = 'Bases_de_datos'
 
 # Función para verificar si una columna existe en una tabla
