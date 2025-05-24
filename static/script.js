@@ -159,7 +159,7 @@ function addToShoppingList(product) {
     li.appendChild(img);
 
     const text = document.createElement("span");
-    text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
+    text.innerHTML = `${product.nombre} ${formatCurrency(product.precio)} (${product.db})`;
 
     if (product.condicion) {
         const condition = document.createElement("small");
