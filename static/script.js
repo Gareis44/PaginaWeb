@@ -84,7 +84,7 @@ function updateTotal() {
         const span = item.querySelector("span");
         if (span) {
             const texto = span.textContent;
-            const match = texto.match(/\$?([\d.,]+)/);
+            const match = texto.match(/\$\s?(\d{1,3}(?:\.\d{3})*,\d{2})/);
             if (match && match[1]) {
                 const raw = match[1].replace(/\./g, "").replace(",", ".");
                 total += parseFloat(raw);
