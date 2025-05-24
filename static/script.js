@@ -19,7 +19,7 @@ function extractKeywords(name) {
     return normalized.split(/[^a-z0-9]+/).filter(Boolean); // Divide por cualquier carácter que no sea letra o número
 }
 
-// Funcion formatear precio ($1.041,34)
+// Funcion formatear precio ($ 1.041,34)
 function formatCurrency(value) {
     return new Intl.NumberFormat('es-AR', {
         style: 'currency',
@@ -75,6 +75,27 @@ function searchProducts(query) {
     return Array.from(matchedProducts).sort((a, b) => a.precio - b.precio);
 }
 
+// Manejar Precio Total
+function updateTotal() {
+    const items = shoppingList.querySelectorAll("li");
+    let total = 0;
+
+    items.forEach(item => {
+        const span = item.querySelector("span");
+        if (span) {
+            const texto = span.textContent;
+            const match = texto.match(/- \$?([\d.,]+)/);
+            if (match && match[1]) {
+                const raw = match[1].replace(/\./g, "").replace(",", ".");
+                total += parseFloat(raw);
+            }
+        }
+    });
+
+    document.getElementById("total-container").textContent = `Total: ${formatCurrency(total)}`;
+}
+
+
 // Evento de entrada con debounce mejorado (500ms)
 search.addEventListener("input", () => {
     clearTimeout(searchTimeout);
@@ -106,7 +127,7 @@ function mostrarSugerencias() {
 
             const text = document.createElement("span");
             // text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
-            text.innerHTML = `${product.nombre} - ${formatCurrency(product.precio)} (${product.db})`;
+            text.innerHTML = `${product.nombre} ${formatCurrency(product.precio)} (${product.db})`;
 
             if (product.condicion) {
                 const condition = document.createElement("small");
@@ -163,6 +184,8 @@ function addToShoppingList(product) {
 
     suggestions.innerHTML = "";
     search.value = "";
+
+    updateTotal(); // Actualizar el total al añadir un producto
 }
 
 // Manejar el evento de clic en el botón "CONFIRMAR"
