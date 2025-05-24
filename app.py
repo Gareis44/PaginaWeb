@@ -64,7 +64,7 @@ def obtener_productos():
                     resultado = {
                         "db": db_name,
                         "nombre": p[0],
-                        "precio": p[1]
+                        "precio": float(p[1])
                     }
                     idx = 2
                     if tiene_imagen:

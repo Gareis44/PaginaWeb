@@ -19,11 +19,11 @@ function extractKeywords(name) {
     return normalized.split(/[^a-z0-9]+/).filter(Boolean); // Divide por cualquier carácter que no sea letra o número
 }
 
-// Función para convertir el string de precio a número
-function parsePrice(priceStr) {
-    let normalized = priceStr.replace(/[^\d.,]/g, "").replace(/\./g, "").replace(",", ".");
-    return parseFloat(normalized);
-}
+// // Función para convertir el string de precio a número
+// function parsePrice(priceStr) {
+//     let normalized = priceStr.replace(/[^\d.,]/g, "").replace(/\./g, "").replace(",", ".");
+//     return parseFloat(normalized);
+// }
 
 // Cargar productos y construir índice de búsqueda
 fetch('https://ultra-mercado.onrender.com/productos')
@@ -62,7 +62,7 @@ function searchProducts(query) {
         matchedProducts = new Set([...matchedProducts].filter(product => keywordIndex.get(queryWords[i]).has(product)));
     }
 
-    return Array.from(matchedProducts).sort((a, b) => parsePrice(a.precio) - parsePrice(b.precio));
+    return Array.from(matchedProducts).sort((a, b) => a.precio - b.precio);
 }
 
 // Evento de entrada con debounce mejorado (500ms)
