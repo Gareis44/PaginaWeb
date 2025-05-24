@@ -177,6 +177,7 @@ function addToShoppingList(product) {
     removeButton.style.marginLeft = "10px";
     removeButton.addEventListener("click", () => {
         shoppingList.removeChild(li);
+        updateTotal(); // Actualizar el total al eliminar un producto
     });
 
     li.appendChild(removeButton);
