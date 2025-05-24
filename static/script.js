@@ -177,14 +177,63 @@ function addToShoppingList(product) {
 
     // ESTO AGREGA UNA CASILLA DE CANTIDAD
     // Input cantidad
+    // const quantityInput = document.createElement("input");
+    // quantityInput.type = "number";
+    // quantityInput.min = "1";
+    // quantityInput.value = 1;
+    // // quantityInput.style.width = "60px";
+    // // quantityInput.style.marginLeft = "10px";
+    // // quantityInput.style.textAlign = "center";
+    // quantityInput.className = "w-16 ml-2 text-center border rounded px-1 py-0.5 sm:py-1 sm:w-20";
+    // li.appendChild(quantityInput);
+
+    // Manejar las casillas de + y -
+    const quantityWrapper = document.createElement("div");
+    quantityWrapper.className = "flex items-center gap-1 ml-2";
+
+    // Botón de restar
+    const minusBtn = document.createElement("button");
+    minusBtn.textContent = "−";
+    minusBtn.className = "bg-gray-200 px-2 rounded text-lg";
+    quantityWrapper.appendChild(minusBtn);
+
+    // Input cantidad
     const quantityInput = document.createElement("input");
     quantityInput.type = "number";
     quantityInput.min = "1";
     quantityInput.value = 1;
-    quantityInput.style.width = "60px";
-    quantityInput.style.marginLeft = "10px";
-    quantityInput.style.textAlign = "center";
-    li.appendChild(quantityInput);
+    quantityInput.className = "w-12 text-center border rounded px-1 py-0.5";
+    quantityWrapper.appendChild(quantityInput);
+
+    // Botón de sumar
+    const plusBtn = document.createElement("button");
+    plusBtn.textContent = "+";
+    plusBtn.className = "bg-gray-200 px-2 rounded text-lg";
+    quantityWrapper.appendChild(plusBtn);
+
+    // Insertar el conjunto en el <li>
+    li.appendChild(quantityWrapper);
+
+
+    minusBtn.addEventListener("click", () => {
+        let qty = parseInt(quantityInput.value);
+        if (isNaN(qty) || qty <= 1) return;
+        qty--;
+        quantityInput.value = qty;
+        quantityInput.dispatchEvent(new Event("input"));
+    });
+
+    plusBtn.addEventListener("click", () => {
+        let qty = parseInt(quantityInput.value);
+        if (isNaN(qty)) qty = 1;
+        qty++;
+        quantityInput.value = qty;
+        quantityInput.dispatchEvent(new Event("input"));
+    });
+
+    // Termina manejo casilla de + y -
+
+
 
     // Precio por unidad (no editable, oculto para cálculo)
     const pricePerUnit = product.precio;
@@ -226,6 +275,8 @@ function addToShoppingList(product) {
 
     updateTotal(); // Actualizar el total al añadir un producto
 }
+
+
 
 // function addToShoppingList(product) {
 //     const li = document.createElement("li");
