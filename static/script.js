@@ -81,13 +81,17 @@ function updateTotal() {
     let total = 0;
 
     items.forEach(item => {
-        const span = item.querySelector("span");
-        if (span) {
-            const texto = span.textContent;
+        const priceSpan = item.querySelector("span:last-of-type"); // El span que muestra precio total del producto
+        const quantityInput = item.querySelector("input[type='number']");
+        if (priceSpan && quantityInput) {
+            // Extraer número del precio total que ya está calculado en formato moneda
+            const texto = priceSpan.textContent;
             const match = texto.match(/\$\s?(\d{1,3}(?:\.\d{3})*,\d{2})/);
             if (match && match[1]) {
                 const raw = match[1].replace(/\./g, "").replace(",", ".");
-                total += parseFloat(raw);
+                const priceValue = parseFloat(raw);
+                const qty = parseInt(quantityInput.value);
+                total += priceValue; // priceValue ya es precio total producto (unitario * qty)
             }
         }
     });
@@ -171,6 +175,40 @@ function addToShoppingList(product) {
 
     li.appendChild(text);
 
+    // ESTO AGREGA UNA CASILLA DE CANTIDAD
+    // Input cantidad
+    const quantityInput = document.createElement("input");
+    quantityInput.type = "number";
+    quantityInput.min = "1";
+    quantityInput.value = 1;
+    quantityInput.style.width = "60px";
+    quantityInput.style.marginLeft = "10px";
+    quantityInput.style.textAlign = "center";
+    li.appendChild(quantityInput);
+
+    // Precio por unidad (no editable, oculto para cálculo)
+    const pricePerUnit = product.precio;
+
+    // Span para mostrar precio total del producto (cantidad * precio unitario)
+    const priceTotalSpan = document.createElement("span");
+    priceTotalSpan.textContent = formatCurrency(pricePerUnit);
+    priceTotalSpan.style.marginLeft = "10px";
+    li.appendChild(priceTotalSpan);
+
+    // Actualizar precio total cuando cambie cantidad
+    quantityInput.addEventListener("input", () => {
+        let qty = parseInt(quantityInput.value);
+        if (isNaN(qty) || qty < 1) {
+            qty = 1;
+            quantityInput.value = qty;
+        }
+        const totalPrice = pricePerUnit * qty;
+        priceTotalSpan.textContent = formatCurrency(totalPrice);
+        updateTotal();
+    });
+
+    // ACA TERMINA LA PARTE DE CANTIDAD
+
     const removeButton = document.createElement("button");
     removeButton.classList.add("btn", "btn-danger", "btn-sm");
     removeButton.textContent = "X";
@@ -188,6 +226,85 @@ function addToShoppingList(product) {
 
     updateTotal(); // Actualizar el total al añadir un producto
 }
+
+// function addToShoppingList(product) {
+//     const li = document.createElement("li");
+//     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
+
+//     const img = document.createElement("img");
+//     img.src = product.imagen;
+//     img.alt = product.nombre;
+//     img.style.width = "50px";
+//     img.style.height = "50px";
+//     img.style.marginRight = "10px";
+
+//     // Contenedor de texto y precio
+//     const details = document.createElement("div");
+//     details.style.flex = "1";
+
+//     const nameSpan = document.createElement("span");
+//     nameSpan.textContent = product.nombre;
+
+//     const conditionSmall = document.createElement("small");
+//     if (product.condicion) {
+//         conditionSmall.textContent = ` \u2728 ${product.condicion}`;
+//         conditionSmall.style.color = "#ffc107";
+//         conditionSmall.style.marginLeft = "10px";
+//     }
+
+//     const priceSpan = document.createElement("span");
+//     priceSpan.textContent = formatCurrency(product.precio);
+//     priceSpan.style.marginLeft = "20px";
+//     priceSpan.style.fontWeight = "bold";
+
+//     details.appendChild(nameSpan);
+//     if (product.condicion) details.appendChild(conditionSmall);
+//     details.appendChild(priceSpan);
+
+//     const cantidadInput = document.createElement("input");
+//     cantidadInput.type = "number";
+//     cantidadInput.min = "1";
+//     cantidadInput.value = "1";
+//     cantidadInput.style.width = "50px";
+//     cantidadInput.style.marginLeft = "10px";
+
+//     // Guardar precio unitario en dataset para referencia
+//     cantidadInput.dataset.precioUnitario = product.precio;
+
+//     cantidadInput.addEventListener("input", () => {
+//         let cantidad = parseInt(cantidadInput.value);
+//         if (!cantidad || cantidad < 1) {
+//             cantidad = 1;
+//             cantidadInput.value = cantidad;
+//         }
+//         const totalProducto = cantidad * parseFloat(cantidadInput.dataset.precioUnitario);
+//         priceSpan.textContent = formatCurrency(totalProducto);
+//         updateTotal();
+//     });
+
+//     const removeButton = document.createElement("button");
+//     removeButton.classList.add("btn", "btn-danger", "btn-sm");
+//     removeButton.textContent = "X";
+//     removeButton.style.marginLeft = "10px";
+//     removeButton.addEventListener("click", () => {
+//         shoppingList.removeChild(li);
+//         updateTotal();
+//     });
+
+//     li.appendChild(img);
+//     li.appendChild(details);
+//     li.appendChild(cantidadInput);
+//     li.appendChild(removeButton);
+
+//     shoppingList.appendChild(li);
+//     suggestions.innerHTML = "";
+//     search.value = "";
+//     updateTotal();
+// }
+
+
+
+
 
 // Manejar el evento de clic en el botón "CONFIRMAR"
 confirmButton.addEventListener("click", () => {
