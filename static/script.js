@@ -19,6 +19,16 @@ function extractKeywords(name) {
     return normalized.split(/[^a-z0-9]+/).filter(Boolean); // Divide por cualquier carácter que no sea letra o número
 }
 
+// Funcion formatear precio ($1.041,34)
+function formatCurrency(value) {
+    return new Intl.NumberFormat('es-AR', {
+        style: 'currency',
+        currency: 'ARS',
+        minimumFractionDigits: 2
+    }).format(value);
+}
+
+
 // // Función para convertir el string de precio a número
 // function parsePrice(priceStr) {
 //     let normalized = priceStr.replace(/[^\d.,]/g, "").replace(/\./g, "").replace(",", ".");
@@ -95,7 +105,8 @@ function mostrarSugerencias() {
             img.style.marginRight = "10px";
 
             const text = document.createElement("span");
-            text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
+            // text.innerHTML = `${product.nombre} - ${product.precio} (${product.db})`;
+            text.innerHTML = `${product.nombre} - ${formatCurrency(product.precio)} (${product.db})`;
 
             if (product.condicion) {
                 const condition = document.createElement("small");
