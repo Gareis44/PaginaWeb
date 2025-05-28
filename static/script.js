@@ -28,13 +28,6 @@ function formatCurrency(value) {
     }).format(value);
 }
 
-
-// // Función para convertir el string de precio a número
-// function parsePrice(priceStr) {
-//     let normalized = priceStr.replace(/[^\d.,]/g, "").replace(/\./g, "").replace(",", ".");
-//     return parseFloat(normalized);
-// }
-
 // Cargar productos y construir índice de búsqueda
 fetch('https://ultra-mercado.onrender.com/productos')
     .then(response => response.json())
@@ -98,7 +91,6 @@ function updateTotal() {
 
     document.getElementById("total-container").textContent = `Total: ${formatCurrency(total)}`;
 }
-
 
 // Evento de entrada con debounce mejorado (500ms)
 search.addEventListener("input", () => {
@@ -275,87 +267,6 @@ function addToShoppingList(product) {
 
     updateTotal(); // Actualizar el total al añadir un producto
 }
-
-
-
-// function addToShoppingList(product) {
-//     const li = document.createElement("li");
-//     li.classList.add("list-group-item", "d-flex", "justify-content-between", "align-items-center");
-
-//     const img = document.createElement("img");
-//     img.src = product.imagen;
-//     img.alt = product.nombre;
-//     img.style.width = "50px";
-//     img.style.height = "50px";
-//     img.style.marginRight = "10px";
-
-//     // Contenedor de texto y precio
-//     const details = document.createElement("div");
-//     details.style.flex = "1";
-
-//     const nameSpan = document.createElement("span");
-//     nameSpan.textContent = product.nombre;
-
-//     const conditionSmall = document.createElement("small");
-//     if (product.condicion) {
-//         conditionSmall.textContent = ` \u2728 ${product.condicion}`;
-//         conditionSmall.style.color = "#ffc107";
-//         conditionSmall.style.marginLeft = "10px";
-//     }
-
-//     const priceSpan = document.createElement("span");
-//     priceSpan.textContent = formatCurrency(product.precio);
-//     priceSpan.style.marginLeft = "20px";
-//     priceSpan.style.fontWeight = "bold";
-
-//     details.appendChild(nameSpan);
-//     if (product.condicion) details.appendChild(conditionSmall);
-//     details.appendChild(priceSpan);
-
-//     const cantidadInput = document.createElement("input");
-//     cantidadInput.type = "number";
-//     cantidadInput.min = "1";
-//     cantidadInput.value = "1";
-//     cantidadInput.style.width = "50px";
-//     cantidadInput.style.marginLeft = "10px";
-
-//     // Guardar precio unitario en dataset para referencia
-//     cantidadInput.dataset.precioUnitario = product.precio;
-
-//     cantidadInput.addEventListener("input", () => {
-//         let cantidad = parseInt(cantidadInput.value);
-//         if (!cantidad || cantidad < 1) {
-//             cantidad = 1;
-//             cantidadInput.value = cantidad;
-//         }
-//         const totalProducto = cantidad * parseFloat(cantidadInput.dataset.precioUnitario);
-//         priceSpan.textContent = formatCurrency(totalProducto);
-//         updateTotal();
-//     });
-
-//     const removeButton = document.createElement("button");
-//     removeButton.classList.add("btn", "btn-danger", "btn-sm");
-//     removeButton.textContent = "X";
-//     removeButton.style.marginLeft = "10px";
-//     removeButton.addEventListener("click", () => {
-//         shoppingList.removeChild(li);
-//         updateTotal();
-//     });
-
-//     li.appendChild(img);
-//     li.appendChild(details);
-//     li.appendChild(cantidadInput);
-//     li.appendChild(removeButton);
-
-//     shoppingList.appendChild(li);
-//     suggestions.innerHTML = "";
-//     search.value = "";
-//     updateTotal();
-// }
-
-
-
-
 
 // Manejar el evento de clic en el botón "CONFIRMAR"
 confirmButton.addEventListener("click", () => {
